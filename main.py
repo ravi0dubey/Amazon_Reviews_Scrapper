@@ -3,6 +3,15 @@ from flask_cors import CORS,cross_origin
 import requests
 from bs4 import BeautifulSoup as bs
 from urllib.request import urlopen as uReq
+import pymongo
+
+#ravi0d
+# client_connect = pymongo.MongoClient("mongodb+srv://ravi0dubey:Logiw@cluster0.9hjidow.mongodb.net/?retryWrites=true&w=majority")
+# client_connect = pymongo.MongoClient("mongodb+srv://ravi0dubey:Logiw>@cluster0.0zxmnkl.mongodb.net/?retryWrites=true&w=majority")
+client_connect = pymongo.MongoClient("mongodb+srv://ravi0dubey:Logiw@cluster0.9hjidow.mongodb.net/?retryWrites=true&w=majority")
+database= client_connect["amazondb"]
+collection = database["amazon_product_review"]
+#
 
 #creating a flask app
 app = Flask(__name__)
@@ -46,7 +55,6 @@ def index():
                     #name.encode(encoding='utf-8')
                     name = commentbox.div.find_all('div', {'class': 'a-profile-content'})[0].text
                     print(name)
-
                 except:
                     name = 'No Name'
 
@@ -57,6 +65,7 @@ def index():
                     # here you have to give div id
                 except:
                     rating = 'No Rating'
+
 
                 try:
                     #commentHead.encode(encoding='utf-8')
@@ -75,7 +84,12 @@ def index():
 
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                           "Comment": custComment}
+
+                # Inserting Data1 into collection
+                collection.insert_one(mydict)
+
                 reviews.append(mydict)
+
             return render_template('results.html', reviews=reviews[0:(len(reviews)-1)])
         except Exception as e:
             print('The Exception message is: ',e)
@@ -86,4 +100,5 @@ def index():
         return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run()
+    # app.run()
+    app.run(host='127.0.0.1', port=8001, debug=True)
