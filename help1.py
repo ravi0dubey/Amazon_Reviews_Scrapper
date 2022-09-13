@@ -28,10 +28,12 @@ def index():
             del bigboxes[0:3]
             box = bigboxes[0]
             productLink = "https://www.amazon.in" + box.div.a['href']
+            print(productLink)
             prodRes = requests.get(productLink)
+            print(prodRes)
             prodRes.encoding='utf-8'
             prod_html = bs(prodRes.text, "html.parser")
-            #print(prod_html)
+            print(prod_html)
             commentboxes = prod_html.find_all('div', {'class': "a-section review aok-relative"})
 
             filename = searchString + ".csv"
@@ -60,13 +62,13 @@ def index():
                     #commentHead.encode(encoding='utf-8')
                     commentHead = commentbox.div.find_all('a',{"class":"review-title"})[0].text
                     print(commentHead)
-
                 except:
                     commentHead = 'No Comment Heading'
+
+
                 try:
-                    comtag = commentbox.div.find_all('div',{"class":"a-row a-spacing-small review-data"})
+                    custComment = commentbox.div.find_all('div',{"class":"a-row a-spacing-small review-data"})[0].text
                     #custComment.encode(encoding='utf-8')
-                    custComment = comtag[0].text
                     print(custComment)
                 except Exception as e:
                     print("Exception while creating dictionary: ",e)
